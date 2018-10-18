@@ -124,22 +124,9 @@ var voteTime = function(arr, pic){
       arr[i].voteTime = time;
     };
   };
-console.log(arr);
 };
 
 voteTime(picArray, $(this));
-  // var votedPic = [];
-  // var time = 0;
-  //
-  // time = new Date().getTime();
-  // votedPic = $(this).attr('id');
-  //
-  // for(i = 0; i < picArray.length; i++){
-  //   if (picArray[i].id == votedPic){
-  //     picArray[i].votes++;
-  //     picArray[i].voteTime = time;
-  //   };
-  // };
 
 //sort last five votes
 var getLastFive = function(arr){
@@ -184,31 +171,39 @@ var displayLast5Votes = function(arr, htmlEl, timeFunc, sortFunc){
 
 displayLast5Votes(picArray, $('#last_five_vote'), getLastFive, sortByTime);
 
-
 //sort pics by votes
-  var getDataToSort = function(pArray){
-    var urlVotes = [];
-    for (j = 0; j < pArray.length; j++){
-      urlVotes.push([pArray[j].votes, pArray[j].url]);
-    };
-    return urlVotes;
+var getDataToSort = function(arr){
+  var urlVotes = [];
+  for (i = 0; i < arr.length; i++){
+    urlVotes.push([arr[i].votes, arr[i].url]);
   };
+  return urlVotes;
+};
 
+var sortByVotes = function(func, arr){
   var picArrayToSort = [];
   var sortedpicArray = [];
 
-  picArrayToSort = getDataToSort(picArray);
+  picArrayToSort = func(arr);
 
   sortedpicArray = picArrayToSort.sort(function(obj1, obj2){
       return obj2[0] - obj1[0];
   });
+  return sortedpicArray
+};
 
 //display pics by votes
-  $('#sorted_pictures').empty();
+var dipslaySortedPics = function(arrFunc, sortFunc, htmlEl, arr){
+  var sortedArr = sortFunc(arrFunc, arr)
 
-  for (l = 0; l < sortedpicArray.length; l++){
-    $('#sorted_pictures').append(`<p>Likes: ${sortedpicArray[l][0]}</p><img src="${sortedpicArray[l][1]}">`);
+  htmlEl.empty();
+
+  for (i = 0; i < sortedArr.length; i++){
+    htmlEl.append(`<p>Likes: ${sortedArr[i][0]}</p><img src="${sortedArr[i][1]}">`);
   }
+};
+
+dipslaySortedPics(getDataToSort, sortByVotes, $('#sorted_pictures'), picArray);
 
 // display reused pairs and chosse if both pictures voted or not
   var reusedPics = [];
