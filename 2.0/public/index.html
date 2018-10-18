@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Which Cat?</title>
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+  </head>
+
+  <body>
+
+    <header>
+      <h1>Which cat is good for me?</h1>
+      <p>(click on the picture to like it)</p>
+      <nav>
+        <ul>
+          <li class="vote"><a href="#">Vote</a></li>
+          <li class="stats"><a href="#">Stats</a></li>
+          <li class="top_cats"><a href="#">Top Cats</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div id="container_voting">
+      <div id="left_picture">
+        <img src="" alt="Left Cat" class="left_picture">
+      </div>
+
+      <div id="right_picture">
+        <img src="" alt="right Cat" class="right_picture">
+      </div>
+    </div>
+
+    <div id="container_stats">
+      <h2>Number of votes</h2>
+      <h3 id="numberOfVotes">0</h3>
+
+      <h2>Reused pairs</h2>
+      <div id="like_one">
+        <h3>Easy choice</h3>
+      </div>
+
+      <div id="hard_choice">
+        <h3>Hard to choose</h3>
+      </div>
+
+    </div>
+
+    <div id="container_top_sort">
+      <h2>Last 5 likes</h2>
+      <div id="last_five_vote">
+
+      </div>
+      <h2>Top likes</h2>
+      <div id="sorted_pictures">
+
+      </div>
+
+    </div>
+
+    <footer>
+      <p>Designed and coded by Lorant Takacs</p>
+      <p>If you are interested in these pictures please visit <a href="http://thecatapi.com" target="_blank">thecatapi.com</a></p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+    <script src="/js/index.js" type="text/javascript"></script>
+
+  </body>
+
+</html>
