@@ -83,21 +83,21 @@ console.log('voted pic id: ', $(this).attr('id'));
 console.log('voted pic source: ', $(this).attr('src'));
 
 //log if voted different pic at reused pair
+var logReuseChoice = function(arr, clickedPic){
+  for (i = 0; i < arr.length; i++){
 
-  for (p = 0; p < picArray.length; p++){
     var clickTime = 0;
-
     clickTime = new Date().getTime();
 
-    if (picArray[p].id == $(this).attr('id') && picArray[p].reused == true){
-        if (p % 2 == 0){
-            if (picArray[p].voteTime - clickTime < picArray[p + 1].voteTime - clickTime){
+    if (arr[i].id == clickedPic.attr('id') && arr[i].reused == true){
+        if (i % 2 == 0){
+            if (arr[i].voteTime - clickTime < arr[i + 1].voteTime - clickTime){
               console.log('different vote');
             } else {
               console.log('same vote');
             };
         } else {
-          if (picArray[p].voteTime - clickTime < picArray[p - 1].voteTime - clickTime){
+          if (arr[i].voteTime - clickTime < arr[i - 1].voteTime - clickTime){
             console.log('different vote');
           } else {
             console.log('same vote');
@@ -105,10 +105,7 @@ console.log('voted pic source: ', $(this).attr('src'));
         };
     };
   };
-
-// count votes
-  votes++;
-  $('#numberOfVotes').html(votes);
+};
 
 // assign vote and vote time to picture
 var voteTime = function(arr, pic){
@@ -125,8 +122,6 @@ var voteTime = function(arr, pic){
     };
   };
 };
-
-voteTime(picArray, $(this));
 
 //sort last five votes
 var getLastFive = function(arr){
@@ -169,8 +164,6 @@ var displayLast5Votes = function(arr, htmlEl, timeFunc, sortFunc){
   };
 };
 
-displayLast5Votes(picArray, $('#last_five_vote'), getLastFive, sortByTime);
-
 //sort pics by votes
 var getDataToSort = function(arr){
   var urlVotes = [];
@@ -203,73 +196,88 @@ var dipslaySortedPics = function(arrFunc, sortFunc, htmlEl, arr){
   }
 };
 
-dipslaySortedPics(getDataToSort, sortByVotes, $('#sorted_pictures'), picArray);
-
 // display reused pairs and chosse if both pictures voted or not
+var logReused = function(arr){
   var reusedPics = [];
 
   $('#container_stats').find('.reused_container').remove();
 
-  for (k = 0; k < picArray.length;k ++){
-    if (picArray[k].reused == true && k % 2 == 0){
-      if (picArray[k].votes == 0 || picArray[k + 1].votes == 0){
+  for (i = 0; i < arr.length; i ++){
+    if (arr[i].reused == true && i % 2 == 0){
+      if (arr[i].votes == 0 || arr[i + 1].votes == 0){
         $('#like_one').append(`<div class="reused_container">
-                                  <img src="${picArray[k].url}", class="${picArray[k].position}">
-                                  <img src="${picArray[k + 1].url}", class="${picArray[k + 1].position}">
+                                  <img src="${arr[i].url}", class="${arr[i].position}">
+                                  <img src="${arr[i + 1].url}", class="${arr[i + 1].position}">
                                   </div>`);
-
       } else {
         $('#hard_choice').append(`<div class="reused_container">
-                                  <img src="${picArray[k].url}", class="${picArray[k].position}">
-                                  <img src="${picArray[k + 1].url}", class="${picArray[k + 1].position}">
+                                  <img src="${arr[i].url}", class="${arr[i].position}">
+                                  <img src="${arr[i + 1].url}", class="${arr[i + 1].position}">
                                   </div>`);
-
       };
     };
   };
+};
 
-// send request for server and later decide if reuse pictures
-  if (picArray.length < 22){
-//request 2 new pictures
-    socket.emit('requestPicture1', messageToServer);
-    socket.emit('requestPicture2', messageToServer);
+var requestPicture = function(sock){
+  socket.emit(sock, messageToServer);
+};
 
-  } else {
+var chooseOrReuse = function(){
+  var reuseOrNot = [];
+  reuseOrNot =  Math.random() >= 0.5;
+  return reuseOrNot;
+};
 
-//choose to reuse pairs or not
-    var reuseOrNot = [];
-    reuseOrNot =  Math.random() >= 0.5;
-
-    if(reuseOrNot){
-      var reuseIndex1 = [];
-      var reuseIndex2 = [];
+var pairToReuse = function(arr){
+  var reuseIndex1 = [];
+  var reuseIndex2 = [];
 
 //random choose which pair to reuse
-      reuseIndex1 = Math.floor(Math.random()*picArray.length);
+  reuseIndex1 = Math.floor(Math.random()*arr.length);
 
-      if (reuseIndex1 % 2 == 0){
-        reuseIndex2 = reuseIndex1 + 1;
-
-      } else {
-        reuseIndex2 = reuseIndex1 - 1;
-
-      };
+  if (reuseIndex1 % 2 == 0){
+    reuseIndex2 = reuseIndex1 + 1;
+  } else {
+    reuseIndex2 = reuseIndex1 - 1;
+  };
 
 // if reused the assign value true to reused
-      picArray[reuseIndex1].reused = true;
-      picArray[reuseIndex2].reused = true;
+  picArray[reuseIndex1].reused = true;
+  picArray[reuseIndex2].reused = true;
 
 //display reused pair
-      $(`#${picArray[reuseIndex1].position}`).find('img').attr( "src", picArray[reuseIndex1].url).attr( "id", picArray[reuseIndex1].id);
-      $(`#${picArray[reuseIndex2].position}`).find('img').attr( "src", picArray[reuseIndex2].url).attr( "id", picArray[reuseIndex2].id);
+  $(`#${arr[reuseIndex1].position}`).find('img').attr( "src", arr[reuseIndex1].url).attr( "id", arr[reuseIndex1].id);
+  $(`#${arr[reuseIndex2].position}`).find('img').attr( "src", arr[reuseIndex2].url).attr( "id", arr[reuseIndex2].id);
+};
 
-    } else {
-
+var getNewPicOrReUse = function(arr, reqpic, randFunc, reuseFunc){
+  if (arr.length < 6){
 //request 2 new pictures
-      socket.emit('requestPicture1', messageToServer);
-      socket.emit('requestPicture2', messageToServer);
+    reqpic('requestPicture1');
+    reqpic('requestPicture2');
+
+  } else {
+    if(randFunc()){
+      reuseFunc(arr);
+    } else {
+      reqpic('requestPicture1');
+      reqpic('requestPicture2');
     };
   };
+};
+
+// count votes
+votes++;
+$('#numberOfVotes').html(votes);
+
+logReuseChoice(picArray, $(this));
+voteTime(picArray, $(this));
+displayLast5Votes(picArray, $('#last_five_vote'), getLastFive, sortByTime);
+dipslaySortedPics(getDataToSort, sortByVotes, $('#sorted_pictures'), picArray);
+logReused(picArray);
+getNewPicOrReUse(picArray, requestPicture, chooseOrReuse, pairToReuse);
+
 });
 
 socket.on('disconnect', function() {
