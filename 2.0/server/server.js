@@ -27,73 +27,43 @@ io.on('connection', (socket) => {
     text: 'new user joined'
   });
 
-//listen to request for initial picture and send to frontend
-  socket.on('initRequestPicture1', (message) => {
+
+const catApiUrl = 'https://api.thecatapi.com/v1/images/search?mime_type=jpg,pngb12ea3e6-c22a-4cea-bb17-18e4163598f5';
+
+var listenAndEmit = (socketToListen, reqEmitFunc, url, pic) => {
+  socket.on(socketToListen, (message) => {
     console.log(message.text);
-    request('https://api.thecatapi.com/v1/images/search?mime_type=jpg,pngb12ea3e6-c22a-4cea-bb17-18e4163598f5', {json:true}, (err, res, body) => {
-      if (err){
-         return console.log(err);
-      }
-
-      console.log(body);
-
-      io.emit('initPicture1', {
-        id: body[0].id,
-        picUrl: body[0].url,
-      });
-    });
+    reqEmitFunc(url, pic);
   });
+}
+
+var reqPicEmit = (url, pic) => {
+  request(url, {json:true}, (err, res, body) => {
+    if (err){
+       return console.log(err);
+    }
+
+    console.log(body);
+
+    io.emit(pic, {
+      id: body[0].id,
+      picUrl: body[0].url,
+    });
+
+  });
+};
 
 //listen to request for initial picture and send to frontend
-  socket.on('initRequestPicture2', (message) => {
-    console.log(message.text);
-    request('https://api.thecatapi.com/v1/images/search?mime_type=jpg,pngb12ea3e6-c22a-4cea-bb17-18e4163598f5', {json:true}, (err, res, body) => {
-      if (err){
-         return console.log(err);
-      }
+listenAndEmit('initRequestPicture1', reqPicEmit, catApiUrl, 'initPicture1');
 
-      console.log(body);
-
-      io.emit('initPicture2', {
-        id: body[0].id,
-        picUrl: body[0].url,
-      });
-    });
-  });
+//listen to request for initial picture and send to frontend
+listenAndEmit('initRequestPicture2', reqPicEmit, catApiUrl, 'initPicture2');
 
 //listen to request for picture and send to frontend
-  socket.on('requestPicture1', (message) => {
-    console.log(message.text);
-    request('https://api.thecatapi.com/v1/images/search?mime_type=jpg,pngb12ea3e6-c22a-4cea-bb17-18e4163598f5', {json:true}, (err, res, body) => {
-      if (err){
-         return console.log(err);
-      }
-
-      console.log(body);
-
-      io.emit('picture1', {
-        id: body[0].id,
-        picUrl: body[0].url,
-      });
-    });
-  });
+listenAndEmit('requestPicture1', reqPicEmit, catApiUrl, 'picture1');
 
 //listen to request for picture and send to frontend
-  socket.on('requestPicture2', (message) => {
-    console.log(message.text);
-    request('https://api.thecatapi.com/v1/images/search?mime_type=jpg,pngb12ea3e6-c22a-4cea-bb17-18e4163598f5', {json:true}, (err, res, body) => {
-      if (err){
-         return console.log(err);
-      }
-
-      console.log(body);
-
-      io.emit('picture2', {
-        id: body[0].id,
-        picUrl: body[0].url,
-      });
-    });
-  });
+listenAndEmit('requestPicture2', reqPicEmit, catApiUrl, 'picture2');
 
   socket.on('disconnect', () => {
     console.log('User was disconnected');
