@@ -1,52 +1,15 @@
+//VARIABLE AND FUNCTION DECLARATION
+//ALL FUNCTIONS ARE CALLED AFTER THE COMMENT RUN_FUNCTIONS
+
 var socket = io();
-var decisions = [];
 var picArray = [];
-var pairs = [];
 var votes = 0;
-var clickedPictureId = [];
 var messageToServer = {
   from: 'User',
   text: 'Send a picture please'
 }
 
-//showing/hideing page parts
-$('a').click( function(){
-  var clickedMenu = $(this).text();
-
-  switch (clickedMenu) {
-    case 'Vote':
-      $('#container_voting').css("display", "block");
-      $('#container_stats').css("display", "none");
-      $('#container_top_sort').css("display", "none");
-      break;
-    case 'Stats':
-      $('#container_voting').css("display", "none");
-      $('#container_stats').css("display", "block");
-      $('#container_top_sort').css("display", "none");
-      break;
-    case 'Top Cats':
-      $('#container_voting').css("display", "none");
-      $('#container_stats').css("display", "none");
-      $('#container_top_sort').css("display", "block");
-      break;
-  };
-});
-
-socket.on('connect', function(){
-
-  console.log('connected to server');
-
-//request 2 inital pictures
-  socket.emit('initRequestPicture1', messageToServer);
-  socket.emit('initRequestPicture2', messageToServer);
-
-});
-
-socket.on('welcomeMessage', function(message){
-  console.log(`Message from ${message.from}: ${message.text}`);
-});
-
-// socket to listen for pictures from server
+// socket to listen for pictures from server and add the picture details to object called picArray
 var receivePicture = function(socketName, picPosition){
 
   socket.on(socketName, function(picture){
@@ -67,20 +30,20 @@ var receivePicture = function(socketName, picPosition){
   });
 };
 
-// listen to socket for 2 initial pictures
-receivePicture('initPicture1', 'left_picture');
-receivePicture('initPicture2', 'right_picture');
-
-// listen to socket for 2 pictures
-receivePicture('picture1', 'left_picture');
-receivePicture('picture2', 'right_picture');
-
-//all picture related actions after the 2 initial pictures received are triggered by clickin on any of the pictures
-$('#container_voting').find('img').click( function() {
-
-// log voted picture
-console.log('voted pic id: ', $(this).attr('id'));
-console.log('voted pic source: ', $(this).attr('src'));
+//showing/hideing page parts funcion
+var displayMenuItems = function(menuButtonText){
+  switch (menuButtonText) {
+      case 'Vote':
+          $('#container_voting').css("display", "block").siblings().css("display", "none");
+        break;
+      case 'Stats':
+          $('#container_stats').css("display", "block").siblings().css("display", "none");
+        break;
+      case 'Top Cats':
+          $('#container_top_sort').css("display", "block").siblings().css("display", "none");
+        break;
+    };
+};
 
 //log if voted different pic at reused pair
 var logReuseChoice = function(arr, clickedPic){
@@ -124,6 +87,7 @@ var voteTime = function(arr, pic){
 };
 
 //sort last five votes
+//getting only voted pictures
 var getLastFive = function(arr){
   var voteTimeObj = [];
   for (i = 0; i < arr.length; i++){
@@ -134,6 +98,7 @@ var getLastFive = function(arr){
   return voteTimeObj;
 };
 
+//call function to get voted pictures sort voted pictures by time
 var sortByTime = function(arr, func){
   var voteTimeObjToSort = [];
   var sortedVoteTimeObj = [];
@@ -146,6 +111,7 @@ var sortByTime = function(arr, func){
   return sortedVoteTimeObj;
 };
 
+//call function to get voted pictures, call function to sort voted pivtures and diplay them
 var displayLast5Votes = function(arr, htmlEl, timeFunc, sortFunc){
 
   htmlEl.empty();
@@ -165,6 +131,7 @@ var displayLast5Votes = function(arr, htmlEl, timeFunc, sortFunc){
 };
 
 //sort pics by votes
+//create object with only vote and url info of pic
 var getDataToSort = function(arr){
   var urlVotes = [];
   for (i = 0; i < arr.length; i++){
@@ -173,6 +140,7 @@ var getDataToSort = function(arr){
   return urlVotes;
 };
 
+// call function to create object with only vote and url info of pic and sort the object
 var sortByVotes = function(func, arr){
   var picArrayToSort = [];
   var sortedpicArray = [];
@@ -185,7 +153,7 @@ var sortByVotes = function(func, arr){
   return sortedpicArray
 };
 
-//display pics by votes
+//call function to create object with only vote and url info, call sort function and display pics by votes
 var dipslaySortedPics = function(arrFunc, sortFunc, htmlEl, arr){
   var sortedArr = sortFunc(arrFunc, arr)
 
@@ -219,16 +187,19 @@ var logReused = function(arr){
   };
 };
 
-var requestPicture = function(sock){
-  socket.emit(sock, messageToServer);
-};
-
+//choose if reuse pairs or request new pictures
 var chooseOrReuse = function(){
   var reuseOrNot = [];
   reuseOrNot =  Math.random() >= 0.5;
   return reuseOrNot;
 };
 
+//request picture
+var requestPicture = function(sock){
+  socket.emit(sock, messageToServer);
+};
+
+//choose which pair to reuse and display it
 var pairToReuse = function(arr){
   var reuseIndex1 = [];
   var reuseIndex2 = [];
@@ -251,6 +222,7 @@ var pairToReuse = function(arr){
   $(`#${arr[reuseIndex2].position}`).find('img').attr( "src", arr[reuseIndex2].url).attr( "id", arr[reuseIndex2].id);
 };
 
+//call function to choose or reuse, then call function to request new pics or reuse pairs
 var getNewPicOrReUse = function(arr, reqpic, randFunc, reuseFunc){
   if (arr.length < 6){
 //request 2 new pictures
@@ -267,19 +239,62 @@ var getNewPicOrReUse = function(arr, reqpic, randFunc, reuseFunc){
   };
 };
 
-// count votes
-votes++;
-$('#numberOfVotes').html(votes);
+//////////////////////////////////////////////////////////////////////////////
+// RUN_FUNCTIONS
 
-logReuseChoice(picArray, $(this));
-voteTime(picArray, $(this));
-displayLast5Votes(picArray, $('#last_five_vote'), getLastFive, sortByTime);
-dipslaySortedPics(getDataToSort, sortByVotes, $('#sorted_pictures'), picArray);
-logReused(picArray);
-getNewPicOrReUse(picArray, requestPicture, chooseOrReuse, pairToReuse);
+// manage menu items
+$('header a').click(function(){
+
+  var clikcedMenuButton = $(this).text();
+  displayMenuItems(clikcedMenuButton);
 
 });
 
+//socket for connecting to server, when connected
+socket.on('connect', function(){
+
+  console.log('connected to server');
+
+//request 2 inital pictures
+  socket.emit('initRequestPicture1', messageToServer);
+  socket.emit('initRequestPicture2', messageToServer);
+
+});
+
+socket.on('welcomeMessage', function(message){
+  console.log(`Message from ${message.from}: ${message.text}`);
+});
+
+// listen to socket for 2 initial pictures
+receivePicture('initPicture1', 'left_picture');
+receivePicture('initPicture2', 'right_picture');
+
+// listen to socket for 2 pictures
+receivePicture('picture1', 'left_picture');
+receivePicture('picture2', 'right_picture');
+
+//all picture related actions after the 2 initial pictures received are triggered by clickin on any of the pictures
+$('#container_voting').find('img').click( function() {
+
+  // log voted picture
+  console.log('voted pic id: ', $(this).attr('id'));
+  console.log('voted pic source: ', $(this).attr('src'));
+
+  // count votes
+  votes++;
+  $('#numberOfVotes').html(votes);
+
+
+  logReuseChoice(picArray, $(this));
+  voteTime(picArray, $(this));
+  displayLast5Votes(picArray, $('#last_five_vote'), getLastFive, sortByTime);
+  dipslaySortedPics(getDataToSort, sortByVotes, $('#sorted_pictures'), picArray);
+  logReused(picArray);
+  getNewPicOrReUse(picArray, requestPicture, chooseOrReuse, pairToReuse);
+
+});
+
+//disconnect message
 socket.on('disconnect', function() {
   console.log('Disconnected from server');
 });

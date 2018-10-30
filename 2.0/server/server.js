@@ -27,9 +27,10 @@ io.on('connection', (socket) => {
     text: 'new user joined'
   });
 
-
+// variable storing API url
 const catApiUrl = 'https://api.thecatapi.com/v1/images/search?mime_type=jpg,pngb12ea3e6-c22a-4cea-bb17-18e4163598f5';
 
+// function listening for request from fron-end then requesting pictures and sending response using callback function reqEmitFunc
 var listenAndEmit = (socketToListen, reqEmitFunc, url, pic) => {
   socket.on(socketToListen, (message) => {
     console.log(message.text);
@@ -37,6 +38,7 @@ var listenAndEmit = (socketToListen, reqEmitFunc, url, pic) => {
   });
 }
 
+// function requesting pic and emit to front-end
 var reqPicEmit = (url, pic) => {
   request(url, {json:true}, (err, res, body) => {
     if (err){
@@ -53,16 +55,16 @@ var reqPicEmit = (url, pic) => {
   });
 };
 
-//listen to request for initial picture and send to frontend
+//listen to request for initial picture1 and send to frontend
 listenAndEmit('initRequestPicture1', reqPicEmit, catApiUrl, 'initPicture1');
 
-//listen to request for initial picture and send to frontend
+//listen to request for initial picture2 and send to frontend
 listenAndEmit('initRequestPicture2', reqPicEmit, catApiUrl, 'initPicture2');
 
-//listen to request for picture and send to frontend
+//listen to request for picture1 and send to frontend
 listenAndEmit('requestPicture1', reqPicEmit, catApiUrl, 'picture1');
 
-//listen to request for picture and send to frontend
+//listen to request for picture2 and send to frontend
 listenAndEmit('requestPicture2', reqPicEmit, catApiUrl, 'picture2');
 
   socket.on('disconnect', () => {
