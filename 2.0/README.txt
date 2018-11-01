@@ -1,6 +1,8 @@
-Prerequisites: Node.js 
+Prerequisites: Node.js
 
 Dear user,
+
+Heroku url: https://immense-bastion-52309.herokuapp.com/
 
 Please download the zip file to your desktop and unzip it.
 Now open up the Command Prompt window and navigate to the folder.
