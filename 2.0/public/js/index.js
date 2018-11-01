@@ -224,7 +224,7 @@ var pairToReuse = function(arr){
 
 //call function to choose or reuse, then call function to request new pics or reuse pairs
 var getNewPicOrReUse = function(arr, reqpic, randFunc, reuseFunc){
-  if (arr.length < 6){
+  if (arr.length < 22){
 //request 2 new pictures
     reqpic('requestPicture1');
     reqpic('requestPicture2');
