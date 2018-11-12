@@ -16,7 +16,6 @@ io.on('connection', (socket) => {
   console.log('New user connected');
 
   var admin = 'Admin';
-  var counter = 0;
 
   socket.emit('welcomeMessage', {
     from: admin,
@@ -34,8 +33,6 @@ io.on('connection', (socket) => {
   // function listening for request from fron-end then requesting pictures and sending response using callback function reqEmitFunc
   var listenAndEmit = (socketToListen, reqEmitFunc, url, pic) => {
     socket.on(socketToListen, (message) => {
-      counter++;
-      console.log(counter);
       console.log(message.text);
       reqEmitFunc(url, pic);
     });

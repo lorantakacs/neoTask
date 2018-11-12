@@ -2,14 +2,10 @@
     width: 80%;
     margin: auto;
     position: relative;
-    height: 620px
 }
 
 #container_stats{
   display: none;
-  /* width: 80%;
-  margin: auto;
-  position: relative; */
 }
 
 #container_top_sort{
@@ -25,46 +21,45 @@
 }
 
 #container_voting .left_picture{
+  display: block;
   position: absolute;
   right: 55%;
   width: 100%;
-  max-width: 400px;
-  max-height: 600px;
+  width: 400px;
+  flex: 1;
 }
 
 #container_voting .right_picture{
+  display: block;
   position: absolute;
   left: 55%;
   width: 100%;
-  max-width: 400px;
-  max-height: 600px;
+  width: 400px;
+  flex: 1;
 }
 
 #container_top_sort img{
-  max-height: 600px;
-  max-width: 600px;
+  width: 400px;
 }
 
-.reused_container{
-  display: block;
-  width: 80%;
-  margin: auto;
-  position: relative;
-  height: 420px;
+footer{
+  position: absolute;
+  bottom: 20px;
+  width: 600px;
+  left: 50%;
+  margin-left: -300px;
 }
 
 .reused_container .left_picture{
   position: absolute;
   right: 55%;
-  max-height: 400px;
-  max-width: 400px;
+  width: 400px;
 }
 
 .reused_container .right_picture{
   position: absolute;
   left: 55%;
-  max-height: 400px;
-  max-width: 400px;
+  width: 400px;
 }
 
 
